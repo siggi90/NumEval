@@ -108,3 +108,5 @@ array(array('value' => '3', 'remainder' => '1/2'), array('value' => '1', 'remain
 Quadratic_solver solves quadratic equations using numeval.
 
 Arithematic is for delaying resolving roots and powers until the end of arithematic which can be useful for maximum precision.
+
+NumEval is also available as a NuGet package: https://www.nuget.org/packages/NumEval/
