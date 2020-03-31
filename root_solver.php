@@ -125,7 +125,7 @@ class root_solver {
 				
 		$vd = $this->evaluation->multiply_total($v, $denominator);
 		$vd_squared = $this->evaluation->multiply_total($vd, $vd);
-				$denominator_squared = $this->evaluation->execute_power_whole($denominator, $this->power);		
+		$denominator_squared = $this->evaluation->execute_power_whole($denominator, $this->power);		
 		$rd_squared = $this->evaluation->multiply_total($division_value, $denominator_squared);
 		$rd_root = $this->evaluation->execute_power($rd_squared, $this->power);
 		
@@ -147,9 +147,9 @@ class root_solver {
 				
 		$vd = $this->evaluation->multiply_total($v, $denominator);
 		$vd_squared = $this->evaluation->multiply_total($vd, $vd);
-				$denominator_squared = $this->evaluation->multiply_total($denominator, $denominator);
+		$denominator_squared = $this->evaluation->multiply_total($denominator, $denominator);
 		$rd_squared = $this->evaluation->multiply_total($remainder, $denominator_squared);
-				$rd_squared = $this->evaluation->add_total($rd_squared, $vd_squared);
+		$rd_squared = $this->evaluation->add_total($rd_squared, $vd_squared);
 		$rd_root = $this->evaluation->execute_power($rd_squared, 2);
 				
 		$numerator = $this->evaluation->subtract_total($rd_root, $vd);
@@ -238,7 +238,10 @@ class root_solver {
 		$k_squared = $this->evaluation->execute_divide($k_squared, $m_squared);	
 		
 		
-		$m_b = $km;		$m_root_b = $km_root;		$k_b = $k_squared;		$m_b_2 = $km;
+		$m_b = $km;		
+		$m_root_b = $km_root;		
+		$k_b = $k_squared;		
+		$m_b_2 = $km;
 		$m_root_b_2 = $km_root;
 		$k_b_2 = $k_squared;
 		
@@ -262,6 +265,5 @@ class root_solver {
 	}
 		
 }
-
 
 ?>

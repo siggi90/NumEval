@@ -66,7 +66,8 @@ class evaluation_parse {
 				$paranthesis_count++;	
 			} else if($digit == ')') {
 				$paranthesis_count--;
-			} else if($this->is_symbol($digit) && $digit != '^') { 				$operator_position_insert = array('value' => $key, 'type' => 'insert');	
+			} else if($this->is_symbol($digit) && $digit != '^') { 				
+				$operator_position_insert = array('value' => $key, 'type' => 'insert');	
 				if(count($operator_position) > 0) {
 				}
 				$insert = true;
@@ -127,7 +128,8 @@ class evaluation_parse {
 				$position += 1;	
 			}
 			foreach($digits as $key => $digit) {
-				if((!isset($last_place) || $key > $last_place) && $key < $position+1) { 					$result .= $digit;
+				if((!isset($last_place) || $key > $last_place) && $key < $position+1) { 					
+					$result .= $digit;
 				}
 			}
 			$last_place = $position;
@@ -170,7 +172,8 @@ class evaluation_parse {
 						$cur_operator_count = $sub_position['count'];
 					}
 					
-					if(isset($cur_operator_count) && $sub_position['type'] == 'paranthesis' && $cur_operator_count == $sub_position['count']) { 						$set_insert = true;
+					if(isset($cur_operator_count) && $sub_position['type'] == 'paranthesis' && $cur_operator_count == $sub_position['count']) { 						
+						$set_insert = true;
 					}
 					if((!isset($cur_operator_count) || $set_insert) && $sub_position['type'] == 'insert') {
 						$insert_pos = $sub_position['value'];
@@ -196,7 +199,8 @@ class evaluation_parse {
 				$stop = false;
 				$stop_index = count($digits);
 				$append = "";
-				if($key > 0) { 					foreach($digits as $index => $digit) {
+				if($key > 0) { 					
+					foreach($digits as $index => $digit) {
 						if($digit == "(") {
 							$paranthesis_count++;
 						} else if($digit == ")") {
@@ -472,7 +476,8 @@ class evaluation_parse {
 			} else if($token == ')') {
 				$parse_tree = ($parse_tree->get_parent() != NULL ? $parse_tree->get_parent() : $parse_tree);
 				$parse_tree = ($parse_tree->get_parent() != NULL ? $parse_tree->get_parent() : $parse_tree);
-			} else if(is_numeric($token) || $token == '.' || $token == "x") { 				if(count($symbols) > 0) {
+			} else if(is_numeric($token) || $token == '.' || $token == "x") { 				
+				if(count($symbols) > 0) {
 					if($this->pop($symbols, false) == '+' || $this->pop($symbols, false) == '-') {
 						$parse_tree = ($parse_tree->get_parent() != NULL ? $parse_tree->get_parent() : $parse_tree);
 						$parse_tree = $parse_tree->child();
@@ -804,7 +809,7 @@ class evaluation_parse {
 					$intermediate_value = $this->evaluation->subtract_total($current_value_result, $value_result);
 					break;
 				case '*':
-										$intermediate_value = $this->evaluation->multiply_total($current_value_result, $value_result);
+					$intermediate_value = $this->evaluation->multiply_total($current_value_result, $value_result);
 					break;
 				case '/':
 					$inf_switch = 1;
@@ -848,7 +853,8 @@ class evaluation_parse {
 					$intermediate_value = $this->evaluation->trigonometry_radian($value_result)['cos'];
 					break;
 				case 'b':
-					$intermediate_value = $this->evaluation->trigonometry_radian($value_result)['sin'];					break;
+					$intermediate_value = $this->evaluation->trigonometry_radian($value_result)['sin'];					
+					break;
 				case 'd':
 					$intermediate_value = $this->evaluation->trigonometry_radian($value_result)['cot'];
 					break;
@@ -876,7 +882,5 @@ class evaluation_parse {
 		return $current_value;
 	}
 }
-
-
 
 ?>

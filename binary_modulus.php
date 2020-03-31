@@ -720,7 +720,8 @@ class binary_modulus {
 			return $this->evaluation->binary_subtraction($value, $divider);	
 		}
 		$xor_value = "";
-		$value_digits = str_split($value);		foreach($value_digits as $power => $digit) {
+		$value_digits = str_split($value);		
+		foreach($value_digits as $power => $digit) {
 			$p = $power;
 			$power = strlen($value) - $power;
 			$and_value = $this->get_binary_and_value($power);
@@ -729,7 +730,7 @@ class binary_modulus {
 			$masked_value = $this->evaluation->bit_shift_right($masked_value, $p, false);
 			$xor_value = $this->evaluation->binary_xor($xor_value, $masked_value, false, false);
 		}
-						$xor_value = $this->evaluation->bit_shift_right($xor_value, strlen($divider)-4, false);
+		$xor_value = $this->evaluation->bit_shift_right($xor_value, strlen($divider)-4, false);
 		$xor_value = $this->evaluation->remove_leading_zeros($xor_value);
 		$multiplication = $this->evaluation->binary_multiplication($xor_value, $divider);
 		$multiplication = $this->evaluation->remove_leading_zeros($multiplication);
@@ -742,7 +743,6 @@ class binary_modulus {
 			$subtraction = $this->evaluation->binary_subtraction($value, $multiplication);	
 			$subtraction_value = $this->mask_division($subtraction, $divider);
 		}
-		var_dump($subtraction);
 		
 		$xor_value = $this->evaluation->binary_subtraction($xor_value, $addition);
 		$xor_value = $this->evaluation->binary_addition($xor_value, $subtraction_value);
@@ -815,7 +815,7 @@ class binary_modulus {
 		$subtracted_value = $this->evaluation->binary_subtraction($value, $subtraction_value);
 		$subtracted_value = $this->evaluation->remove_leading_zeros($subtracted_value);
 		if($this->evaluation->larger($subtracted_value, $divider)) {
-						return $this->execute_modulus($subtracted_value, $divider);
+			return $this->execute_modulus($subtracted_value, $divider);
 		}
 		return $subtracted_value;
 		
@@ -845,7 +845,7 @@ class binary_modulus {
 		while($this->evaluation->larger($value, $numerator)) {
 			$numerator = $this->bit_shift_by_decimal($numerator, "1");
 			$divider_translation_decimal = $this->evaluation->add($divider_translation_decimal, "1");
-					}
+		}
 		$divider_translation_decimal = $this->evaluation->subtract($divider_translation_decimal, "1");
 		
 						
@@ -1897,7 +1897,7 @@ class binary_modulus {
 	
 	function verify_repeat_pattern($digits, $subtraction_digits) {
 		$counter = 0;
-				$reverse_counter = floor(count($digits)/2) + $counter;
+		$reverse_counter = floor(count($digits)/2) + $counter;
 		if(count($digits) < count($subtraction_digits)*2) {
 			return false;	
 		}
@@ -1907,7 +1907,7 @@ class binary_modulus {
 				return false;	
 			}
 			$counter++;
-						$reverse_counter = floor(count($digits)/2) + $counter;
+			$reverse_counter = floor(count($digits)/2) + $counter;
 		}
 		$this->repeat_pattern_restart_length = count($digits)/2;
 		return true;
@@ -2132,9 +2132,7 @@ class binary_modulus {
 			
 		}
 		return $this->trim_zeros(array_reverse($value_digits));	
-	}
-	
-	
+	}	
 }
 
 ?>

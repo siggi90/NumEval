@@ -4929,20 +4929,29 @@ class evaluation {
 	
 	private $prime_factors;
 	
-	
-	private function prime_factors_sub($value) {
+	private $last_factor_value = 2;
+	private function prime_factors_sub($value, $weak=false, $brute_division=false) {
 		$prime_factors = [];
-		if($this->prime_alt($value)) {
+		$prime_valid = false;
+		if(!$brute_division) {
+			if($weak) {
+				$prime_valid = $this->prime($value, NULL, true);
+			} else {
+				$prime_valid = $this->prime_alt($value);	
+			}
+		}
+		if($prime_valid) {
 			$prime_factors[] = $value;
 		} else {
-			$counter = 2;
+			$counter = $this->last_factor_value;//"2";
 			$prime = $counter;
 			$division = array('value' => '1', 'remainder' => '1/1');
 			while($this->fraction_values($division['remainder'])[0] != 0 && $this->larger($value, $counter, false)) {
 				$division = $this->execute_divide($value, $prime);
 				if($this->fraction_values($division['remainder'])[0] == 0 && $division['value'] != "1") {
+					$this->last_factor_value = $prime;
 					$prime_factors[] = $prime;
-					$prime_factors = array_merge($prime_factors, $this->prime_factors_sub($division['value']));	
+					$prime_factors = array_merge($prime_factors, $this->prime_factors_sub($division['value'], $weak, $brute_division));	
 				} else {
 					$counter = $this->add($counter, 1);
 					while(!$this->prime($counter, NULL, true)) {
@@ -4959,7 +4968,7 @@ class evaluation {
 		return $prime_factors;
 	}
 	
-	function prime_factors($value) {
+	function prime_factors_alt($value) {
 		if($value == 0) {
 			return array();	
 		}
@@ -4967,11 +4976,12 @@ class evaluation {
 		return $prime_detection->factor($value);	
 	}
 	
-	function prime_factors_alt($value) {
+	function prime_factors($value, $weak=false, $brute_division=false) {
 		if($value == 0) {
 			return array();	
 		}
-		$prime_factors = $this->prime_factors_sub($value);	
+		$this->last_factor_value = "2";
+		$prime_factors = $this->prime_factors_sub($value, $weak, $brute_division);	
 		sort($prime_factors);
 		return $prime_factors;
 	}
@@ -7735,11 +7745,15 @@ class evaluation {
 		return $value;
 	}
 	
-	function trigonometry($slope) {
+	function trigonometry($slope, $cot_precise=false, $crd_precise=false) {
+		$this->trigonometry->cot_precise = $cot_precise;
+		$this->trigonometry->crd_precise = $crd_precise;
 		return $this->trigonometry->point($slope);	
 	}
 	
-	function trigonometry_radian($radian) {
+	function trigonometry_radian($radian, $cot_precise=false, $crd_precise=false) {
+		$this->trigonometry->cot_precise = $cot_precise;
+		$this->trigonometry->crd_precise = $crd_precise;
 		return $this->trigonometry->radian($radian);	
 	}
 	
@@ -7767,6 +7781,5 @@ class evaluation {
 		return $this->trigonometry->arcsin($radian, $precision);	
 	}
 }
-
 
 ?>

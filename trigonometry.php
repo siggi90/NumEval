@@ -2,7 +2,6 @@
 
 namespace NumEval;
 
-
 class trigonometry {
 	
 	private $evaluation;
@@ -143,6 +142,9 @@ class trigonometry {
 		return $this->point(array($split[0], $split[1]));	
 	}
 	
+	public $cot_precise = false;
+	public $crd_precise = false;
+	
 	function outer_transformation() {
 		$vectors = array(
 			$this->point,
@@ -218,7 +220,7 @@ class trigonometry {
 			$cot[0]['remainder'] = $this->evaluation->execute_shorten_fraction($cot[0]['remainder']);
 			$cot[1]['remainder'] = $this->evaluation->execute_shorten_fraction($cot[1]['remainder']);
 		}
-		$this->cot = $this->vector->length($cot);
+		$this->cot = $this->vector->length($cot, $this->cot_precise);
 		
 		
 		$sec = $this->vector->add_vector($this->point, $tan);
@@ -237,7 +239,11 @@ class trigonometry {
 		
 		$crd_baseline = array($this->evaluation->add_total($this->cos, $this->versine), array('value' => '0', 'remainder' => '0/1'));
 		$crd = $this->vector->subtract_vector($crd_baseline, $this->point);
-		$crd = $this->vector->length($crd);
+		if($this->evaluation->truncate_fractions_length > 0) {
+			$crd[0]['remainder'] = $this->evaluation->execute_shorten_fraction($crd[0]['remainder']);
+			$crd[1]['remainder'] = $this->evaluation->execute_shorten_fraction($crd[1]['remainder']);
+		}
+		$crd = $this->vector->length($crd, $this->crd_precise);
 		
 		$excsc = $this->evaluation->subtract_total($this->csc, array('value' => '1', 'remainder' => '0/1'));
 		$cvs = $this->evaluation->subtract_total(array('value' => '1', 'remainder' => '0/1'), $this->sin);
@@ -389,6 +395,15 @@ class trigonometry {
 				$result['remainder'] = $this->evaluation->execute_shorten_fraction($result['remainder']);	
 			}
 		}
+		return $result;
+	}
+	
+	function compute_pi($precision) {
+		$arctan_value_a = $this->arctan(array('value' => '0', 'remainder' => '1/7'), $precision);
+		$arctan_value_a = $this->evaluation->multiply_total($arctan_value_a, array('value' => '20', 'remainder' => '0/1'));
+		$arctan_value_b = $this->arctan(array('value' => '0', 'remainder' => '3/79'), $precision);	
+		$arctan_value_b = $this->evaluation->multiply_total($arctan_value_b, array('value' => '8', 'remainder' => '0/1'));
+		$result = $this->evaluation->add_total($arctan_value_a, $arctan_value_b);
 		return $result;
 	}
 	

@@ -27,12 +27,15 @@ class quadratic_solver {
 			if($precise) {
 				return false;
 			}
-			$root_value = $this->evaluation->execute_power(array('value' => $root_value, 'remainder' => '0/1'), 2);	
-		}
-		
+			$root_value = $this->evaluation->execute_power(array('value' => $root_value, 'remainder' => '0/1'), 2);
+		} 
 		$negative_b = $this->evaluation->negative_value($this->b);
-		
-		$numerator_a = $this->evaluation->add($negative_b, $root_value);
+		$numerator_a;
+		if(!is_array($root_value)) {
+			$numerator_a = $this->evaluation->add($negative_b, $root_value);
+		} else {
+			$numerator_a = $this->evaluation->add_total(array('value' => $negative_b, 'remainder' => '0/1'), $root_value);	
+		}
 		$numerator_b = $this->evaluation->subtract($negative_b, $root_value);
 		
 		$denominator = $this->evaluation->result(2, $this->a);
@@ -44,6 +47,7 @@ class quadratic_solver {
 			$value_a,
 			$value_b
 		);
+	
 	}
 }
 
