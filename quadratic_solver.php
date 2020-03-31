@@ -22,21 +22,27 @@ class quadratic_solver {
 		$root_value = $this->evaluation->result($this->a, $this->c);
 		$root_value = $this->evaluation->result(4, $root_value);
 		$root_value = $this->evaluation->subtract($b_squared, $root_value);
+		$root_value_unaltered = $root_value;
 		$root_value = $this->evaluation->root($root_value, 2);
 		if($root_value === false) {
 			if($precise) {
 				return false;
 			}
-			$root_value = $this->evaluation->execute_power(array('value' => $root_value, 'remainder' => '0/1'), 2);
+			$root_value = $this->evaluation->execute_power(array('value' => $root_value_unaltered, 'remainder' => '0/1'), 2);
+			if($root_value === NULL) {
+				return false;	
+			}
 		} 
 		$negative_b = $this->evaluation->negative_value($this->b);
 		$numerator_a;
+		$numerator_b;
 		if(!is_array($root_value)) {
 			$numerator_a = $this->evaluation->add($negative_b, $root_value);
+			$numerator_b = $this->evaluation->subtract($negative_b, $root_value);
 		} else {
 			$numerator_a = $this->evaluation->add_total(array('value' => $negative_b, 'remainder' => '0/1'), $root_value);	
+			$numerator_b = $this->evaluation->subtract_total(array('value' => $negative_b, 'remainder' => '0/1'), $root_value);
 		}
-		$numerator_b = $this->evaluation->subtract($negative_b, $root_value);
 		
 		$denominator = $this->evaluation->result(2, $this->a);
 		
