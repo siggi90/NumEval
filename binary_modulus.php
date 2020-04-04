@@ -1,6 +1,7 @@
 <?
 namespace NumEval;
 
+
 class binary_modulus {
 	
 	private $value;
@@ -16,6 +17,38 @@ class binary_modulus {
 		$this->division_value = array();
 		
 		$this->binary_division = new binary_division($this->evaluation);
+	}
+	
+	private $auxillary_verification_strength = "1000";
+	
+	function set_strength($strength) {
+		$this->auxillary_verification_strength = $this->evaluation->change_base($strength, "2");
+	}
+	
+	function prime_verification_auxillary($value, $n_value=NULL, $n_value_count=NULL) {
+		if($n_value === NULL) {
+			$n_1 = "1";
+			$n_2 = "10";
+			$n_value = $this->evaluation->binary_multiplication($n_1, $n_2);	
+			$n_value_count = $n_2;
+		} else {
+			$n_value_count = $this->evaluation->binary_addition($n_value_count, "1");
+			$n_value = $this->evaluation->binary_multiplication($n_value, $n_value_count);	
+		}
+		$fermat_count = $this->evaluation->binary_subtraction($value, "10");
+				
+		$inverse = $this->mod_inverse_fermat($n_value, $fermat_count, $value);
+		
+		$inverse_verification = $this->evaluation->binary_multiplication($inverse, $n_value);
+		$modulus = $this->execute_modulus($inverse_verification, $value);
+		$modulus = $this->evaluation->remove_leading_zeros($modulus);
+		if($modulus == "1") {
+			if($this->evaluation->larger($n_value_count, $this->auxillary_verification_strength)) {
+				return true;	
+			}
+			return $this->prime_verification_auxillary($value, $n_value, $n_value_count);
+		}
+		return false;
 	}
 	
 	function gcd($a, $b) {
@@ -2134,5 +2167,6 @@ class binary_modulus {
 		return $this->trim_zeros(array_reverse($value_digits));	
 	}	
 }
+
 
 ?>

@@ -6110,7 +6110,7 @@ class evaluation {
 	
 	private $last_prime_found = 41;
 	
-	function prime($value, $closest_known_prime=NUL, $weak=false) {
+	function prime($value, $closest_known_prime=NULL, $weak=false, $strength="8") {
 		$value = $this->absolute($value);
 		
 		
@@ -6139,6 +6139,10 @@ class evaluation {
 		$valid = false;
 		if($this->all_digits_same($value) && ($last_value != 1 || strlen($value) > 2)) {
 			return false;	
+		}
+		
+		if($strength != "8") {
+			$this->binary_modulus->set_strength($strength);	
 		}
 		
 		if($this->prime_sum_verification($value) && in_array($last_value, $this->valid_prime_last_character)) {
@@ -6198,11 +6202,15 @@ class evaluation {
 																		//return $valid;
 																		/**/
 																		if(!$weak) {
-																			$valid = $this->binary_modulus->iterative_subtraction_alt($value_binary);
-																			if($valid === "undetermined") {
-																				$valid = $this->prime_root_auxillary_fast($value);	
+																			$valid = $this->binary_modulus->prime_verification_auxillary($value_binary);
+																			if($closest_known_prime != NULL) {
+																				$valid = $this->binary_modulus->iterative_subtraction_alt($value_binary);
+																				if($valid === "undetermined") {
+																					$valid = $this->prime_root_auxillary_fast($value);	
+																				}
 																			}
 																		}
+																		
 																	}
 																}
 															}
@@ -7781,5 +7789,6 @@ class evaluation {
 		return $this->trigonometry->arcsin($radian, $precision);	
 	}
 }
+
 
 ?>
