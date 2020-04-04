@@ -4937,7 +4937,7 @@ class evaluation {
 			if($weak) {
 				$prime_valid = $this->prime($value, NULL, true);
 			} else {
-				$prime_valid = $this->prime_alt($value);	
+				$prime_valid = $this->prime($value);	
 			}
 		}
 		if($prime_valid) {
