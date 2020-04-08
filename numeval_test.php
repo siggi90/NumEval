@@ -3,6 +3,8 @@
 //ini_set("MAX_EXECUTION_TIME", "1600000");
 set_time_limit(1600000); 
 
+include 'number_conversion.php';
+include 'prime_factorization.php';
 include 'binary_modulus.php';
 include 'binary_division.php';
 include 'trigonometry.php';
@@ -25,6 +27,8 @@ $result = $evaluation->add("2", "2");
 
 var_dump($result);
 
+$result = $evaluation->prime_factors_alt("1116875290037");
+var_dump($result);
 
 
 $parse = new NumEval\evaluation_parse("2+2", $evaluation);
