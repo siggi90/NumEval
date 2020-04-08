@@ -54,8 +54,8 @@ Evaluation:
     List Rational Roots
         list_rational_roots, returns a list of all rational roots from 'from' value to 'to' value.
     Is Prime
-        prime (deterministic) pass $closest_known_prime lower than the value being determined as the second parameter for fast results, use $weak=true for a very fast weak test.
-        prime_alt (NumEval's old primality test (deterministic) (can be faster for determining individual values without knowing the closest known prime.
+        prime (deterministic) Strength parameter configures strength of the function(default value is 8), pass $closest_known_prime lower than the value being determined as the second parameter for better validation, use $weak=true for a very fast weak test.
+        prime_alt (NumEval's old primality test (deterministic))
         prime_p (Pollard's Rho primality test) (deterministic)
     Absolute
     Negative
@@ -79,8 +79,8 @@ Evaluation:
     List Divisors
         list_divisors (uses prime_factors function)
     Prime Factors
-        prime_factors (Pollard's Rho)
-        prime_factors_alt (uses NumEval's prime function)
+        prime_factors (uses NumEval's prime function and trial division)
+        prime_factors_alt (NumEval's new prime factorization method in combination with Pollard's rho)
     ModExp
     ModMult
     ModAdd
