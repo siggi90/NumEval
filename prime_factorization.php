@@ -36,9 +36,14 @@ class prime_factorization {
 			$a['value'] = $this->evaluation->result($a['root'], $a['root']);
 			
 			if($a['value'] == $value) {
-				$this->prime_factors[] = $a['root'];
-				$this->prime_factors[] = $a['root'];
-				return $this->prime_factors;	
+				if($this->evaluation->prime($a['root'])) {
+					$this->prime_factors[] = $a['root'];
+					$this->prime_factors[] = $a['root'];
+					return $this->prime_factors;
+				} else {
+					$this->factor($a['root']);
+					return $this->factor($a['root']);	
+				}
 			} else {
 				$interval = $this->factor_sub($value);
 				$b = $this->find_value($value, $interval);
