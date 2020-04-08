@@ -1657,7 +1657,7 @@ class evaluation {
 			$root_floor = $this->add($root_floor, 1);
 			
 		}
-		$value = $this->execute_power_whole(array('value' => $root_floor, 'remainder' => '0/1'), array('value' => $set_power, 'remainder' => '0/1'));
+		$value = $this->execute_power_whole(array('value' => $root_floor, 'remainder' => '0/1'), array('value' => $set_power, 'remainder' => '0/1'))['value'];
 		return array('value' => $value['value'], 'root' => $root_floor);
 	}
 	
@@ -1672,7 +1672,7 @@ class evaluation {
 		}
 		$root = $this->root_closest_result;
 		$root = $this->add($root, 1);
-		return array('root' => $root, 'value' => $this->execute_power_whole($root, $set_power));
+		return array('root' => $root, 'value' => $this->execute_power_whole($root, $set_power)['value']);
 	}
 	
 	function list_rational_roots($from, $to, $set_power=2) {
@@ -2258,7 +2258,7 @@ class evaluation {
 			$last_x_denominator = $x_denominator;
 			$counter++;
 		}
-		return false;
+		return $continued_fraction;
 	}
 	
 	private function e_terms($count) {
@@ -4943,7 +4943,7 @@ class evaluation {
 		if($prime_valid) {
 			$prime_factors[] = $value;
 		} else {
-			$counter = $this->last_factor_value;//"2";
+			$counter = $this->last_factor_value;
 			$prime = $counter;
 			$division = array('value' => '1', 'remainder' => '1/1');
 			while($this->fraction_values($division['remainder'])[0] != 0 && $this->larger($value, $counter, false)) {
@@ -4972,8 +4972,8 @@ class evaluation {
 		if($value == 0) {
 			return array();	
 		}
-		$prime_detection = new prime_detection($value, $this);
-		return $prime_detection->factor($value);	
+		$prime_factorization = new prime_factorization($this);
+		return $prime_factorization->factor($value);	
 	}
 	
 	function prime_factors($value, $weak=false, $brute_division=false) {
