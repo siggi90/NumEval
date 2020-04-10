@@ -7,7 +7,7 @@ class _vector {
 	private $evaluation;
 	
 	function __construct($evaluation) {
-		$this->evaluation = $evaluation;//new evaluation();
+		$this->evaluation = $evaluation;
 	}
 	
 	function compare_vectors($u, $v) {
@@ -23,8 +23,8 @@ class _vector {
 		$dot = $this->dot_product($u, $v);
 		$u_distance = $this->vector_distance($u);
 		$v_distance = $this->vector_distance($v);
-		$division = $this->evaluation->add_total($u_distance, $v_distance);//$u_distance + $v_distance;
-		$result = $this->evaluation->execute_divide($dot, $division);//$dot / $division;
+		$division = $this->evaluation->add_total($u_distance, $v_distance);
+		$result = $this->evaluation->execute_divide($dot, $division);
 		$result = acos($this->evaluation->quick_fraction($result));
 		$result = $this->multiply_total($result, $this->evaluation->whole_common("57.2957795")); 
 		return $result;
@@ -37,6 +37,7 @@ class _vector {
 		$vector = array($this->evaluation->negative_value($u[0]), $u[1]);
 		return $vector;
 	}
+	
 	/*function degree_difference($deg1, $deg2) {
 		if($deg1 < 0) {
 			$deg1 = 360 + $deg1;
@@ -61,20 +62,14 @@ class _vector {
 	}
 	function reset_vector_length($point, $length) {
 		$initial_length = $this->vector_distance($point, array(0,0));
-		$fraction = $this->evaluation->execute_divide($length, $initial_length);//$length/$initial_length;
+		$fraction = $this->evaluation->execute_divide($length, $initial_length);
 		$new_point = $this->reset_distance($point, $fraction);
 		$new_distance = $this->vector_distance($new_point, array(0,0));
 		return $new_point;
 	}
-	/*function set_div_pos($id, $u) {
-		$('#'+$id).css({
-			private $'left' = u[0];
-			private $'bottom' = u[1;
-		});
-	}*/
+	
 	function dot_product($u, $v) {
-		//return ($u[0]*$v[0])+($u[1]*$v[1]);
-		return $this->add($this->evaluation->multiply_total($u[0], $v[0]), $this->evaluation->multiply_total($u[1], $v[1]));
+		return $this->evaluation->add_total($this->evaluation->multiply_total($u[0], $v[0]), $this->evaluation->multiply_total($u[1], $v[1]));
 	}
 	
 	function projection($u, $v) {
@@ -90,28 +85,24 @@ class _vector {
 	}
 	
 	function vector_distance($u, $v=array(array('value' => 0, 'remainder' => '0/1'), array('value' => '0', 'remainder' => '0/1'))) {
-		/*if(!isset($v)) {
-			$v = array(0, 0);
-		}*/
 		return $this->distance($u[0], $u[1], $v[0], $v[1]);
 	}
 	
 	function vector_sum($u, $value) {
 		$vector = array($u[0], $u[1]);
-		$vector[0] = $this->evaluation->add_total($vector[0], $value); //+= $value;
+		$vector[0] = $this->evaluation->add_total($vector[0], $value);
 		$vector[1] = $this->evaluation->add_total($vector[1], $value);
 		return $vector;
 	}
 	
 	function add_vector($u, $v) {
 		$vector = array($u[0], $u[1]);
-		$vector[0] = $this->evaluation->add_total($vector[0], $v[0]);//+= $v[0];
-		$vector[1] = $this->evaluation->add_total($vector[1], $v[1]);//+= $v[1];
+		$vector[0] = $this->evaluation->add_total($vector[0], $v[0]);
+		$vector[1] = $this->evaluation->add_total($vector[1], $v[1]);
 		return $vector;
 	}
 	
-	function distance($x_from, $y_from, $x_to=array('value' => 0, 'remainder' => '0/1'), $y_to=array('value' => 0, 'remainder' => '0/1')) {
-		//$value = sqrt(pow(($x_from - $x_to), 2)+pow(($y_from - $y_to), 2));
+	function distance($x_from, $y_from, $x_to=array('value' => 0, 'remainder' => '0/1'), $y_to=array('value' => 0, 'remainder' => '0/1'), $precise=false) {
 		$term_a = $this->evaluation->subtract_total($x_from, $x_to);
 		$term_a = $this->evaluation->execute_power_whole($term_a, array('value' => '2', 'remainder' => '0/1'));
 		
@@ -119,14 +110,18 @@ class _vector {
 		$term_b = $this->evaluation->execute_power_whole($term_b, array('value' => '2', 'remainder' => '0/1'));
 		
 		$total_term = $this->evaluation->add_total($term_a, $term_b);
-		$value = $this->evaluation->whole_common(sqrt($this->evaluation->quick_numeric($total_term)));
-		//$value = $this->evaluation->execute_power($total_term, "2");
+		$value;
+		if($precise === false) {
+			$value = $this->evaluation->whole_common(sqrt($this->evaluation->quick_numeric($total_term)));
+		} else {
+			$value = $this->evaluation->execute_power($total_term, 2, true);
+		}
 		
 		return $value;
 	}
 	
-	function length($u) {
-		return $this->distance($u[0], $u[1]);	
+	function length($u, $precise=false) {
+		return $this->distance($u[0], $u[1], array('value' => 0, 'remainder' => '0/1'), array('value' => 0, 'remainder' => '0/1'), $precise);	
 	}
 	
 	function normalize_vector($v) {
@@ -135,32 +130,28 @@ class _vector {
 			return $v;	
 		}
 		$vector = array($v[0], $v[1]);
-		$vector[0] = $this->evaluation->execute_divide($vector[0], $length);///= $length;
-		$vector[1] = $this->evaluation->execute_divide($vector[1], $length);//= $length;
+		$vector[0] = $this->evaluation->execute_divide($vector[0], $length);
+		$vector[1] = $this->evaluation->execute_divide($vector[1], $length);
 		return $vector;
 	}
 	
 	function subtract_vector($u, $v) {
 		$vector = array($u[0], $u[1]);
-		$vector[0] = $this->evaluation->subtract_total($vector[0], $v[0]); //-= $v[0];
-		$vector[1] = $this->evaluation->subtract_total($vector[1], $v[1]);//-= $v[1];
-		/*$vector[0] = $this->evaluation->subtract_total($vector[0], $v[0]);
-		$vector[1] = $this->evaluation->subtract_total($vector[1], $v[1]);*/
+		$vector[0] = $this->evaluation->subtract_total($vector[0], $v[0]);
+		$vector[1] = $this->evaluation->subtract_total($vector[1], $v[1]);
 		return $vector;
 	}
 	function sum_vector($u, $v) {
 		$vector = array($u[0], $u[1]);
-		$vector[0] = $this->evaluation->add_total($vector[0], $v[0]);//+= $v[0];
-		$vector[1] = $this->evaluation->add_total($vector[1], $v[1]);//+= $v[1];
+		$vector[0] = $this->evaluation->add_total($vector[0], $v[0]);
+		$vector[1] = $this->evaluation->add_total($vector[1], $v[1]);
 		return $vector;
 	}
 	
 	function stretch_vector($v, $unit_value) {
 		$vector = array($v[0], $v[1]);
-		$vector[0] = $this->evaluation->multiply_total($vector[0], $unit_value); //*= $unit_value;
-		$vector[1] = $this->evaluation->multiply_total($vector[1], $unit_value);//*= $unit_value;
-		/*$vector[0] = $this->evaluation->multiply_total($vector[0], $unit_value);
-		$vector[1] = $this->evaluation->multiply_total($vector[1], $unit_value);*/
+		$vector[0] = $this->evaluation->multiply_total($vector[0], $unit_value); 
+		$vector[1] = $this->evaluation->multiply_total($vector[1], $unit_value);
 		return $vector;
 	}
 	
@@ -185,5 +176,4 @@ class _vector {
 		return $vector;
 	}
 }
-
 ?>

@@ -2105,8 +2105,16 @@ class evaluation {
 			$p = $this->root_fraction_precision;	
 		}
 		$whole = $this->whole_numerator($number);
-		$root_solver = new root_solver($whole, $root, $this);
-		$num = $root_solver->approximate_value();
+		//$root_solver = new root_solver($whole, $root, $this);
+		//$num = $root_solver->approximate_value();
+		
+		$whole_values = $this->fraction_values($whole);
+		$numerator_root = $this->root($whole_values[0], $root);
+		$numerator_root = $this->root_closest_result;
+		$denominator_root = $this->root($whole_values[1], $root);
+		$denominator_root = $this->root_closest_result;
+		$num = $this->execute_divide($numerator_root, $denominator_root);
+		//$num = array('value' => $this->root($number['value'], $root), 'remainder');
 		
 		$x[0] = $num;
 		$x[1] = $this->execute_divide($num, $root);		
@@ -2989,8 +2997,8 @@ class evaluation {
 	public $disable_built_in_approximation;
 	public $disable_exact_root_results = false;
 		
-	function execute_power($value, $power) { 		
-		if($this->disable_exact_root_results) {
+	function execute_power($value, $power, $root_fraction=false) { 		
+		if($this->disable_exact_root_results || $root_fraction) {
 			return $this->root_fraction($value, $power);
 		}
 		$this->execute_power_approximate_flag = false;
@@ -2999,6 +3007,7 @@ class evaluation {
 		$whole_values = $this->fraction_values($whole_numerator);
 		$root_numerator = $this->next_rational_root($whole_values[0], $power);
 		$root_denominator = $this->next_rational_root($whole_values[1], $power);
+		
 		if($root_numerator['value'] == $whole_values[0] && $root_denominator['value'] == $whole_values[1]) {
 			$division = $this->execute_divide($root_numerator['root'], $root_denominator['root']);
 			return $division;
@@ -3029,9 +3038,7 @@ class evaluation {
 		
 		if($base_root == "0") {
 			if($this->disable_built_in_approximation || strlen($whole_values[0]) > $this->maximum_divider_exponent || strlen($whole_values[1]) > $this->maximum_divider_exponent) {
-				$numerator_root = $this->root_fraction($whole_values[0], $power);
-				$denominator_root = $this->root_fraction($whole_values[1], $power);
-				return $this->execute_divide($numerator_root, $denominator_root);	
+				return $this->root_fraction($value, $power);
 			} else {		
 				$quick_fraction = $this->quick_numeric($value);
 				$approximate_value = pow($quick_fraction, 1/$power); 					
@@ -3175,8 +3182,6 @@ class evaluation {
 		$k = $division_whole_fraction_values[0];
 		$m = $division_whole_fraction_values[1];
 		
-			
-		
 		
 		$v = $base_root;			
 		$bv = $this->result($b, $v);
@@ -3199,8 +3204,6 @@ class evaluation {
 		$s_primary_alt = $s_root;
 		
 		
-		
-		
 		if($s_root !== false && $d !== false) {
 			$s_division = $this->execute_divide($s_root, $d);
 			$root = $s_division;
@@ -3221,243 +3224,13 @@ class evaluation {
 				}
 			} 
 		}
-		if($this->disable_built_in_approximation || strlen($whole_values[0]) > $this->maximum_divider_exponent || strlen($whole_values[1]) > $this->maximum_divider_exponent) {
-			$numerator_root = $this->root_fraction($whole_values[0], $power);
-			$denominator_root = $this->root_fraction($whole_values[1], $power);
-			return $this->execute_divide($numerator_root, $denominator_root);	
+		if($this->disable_built_in_approximation || strlen($whole_values[0]) > $this->maximum_divider_exponent || strlen($whole_values[1]) > $this->maximum_divider_exponent) {	
+			return $this->root_fraction($value, $power);
 		}
 		$quick_fraction = $this->quick_numeric($value);
 		$approximate_value = pow($quick_fraction, 1/$power); 					
 		$approximate_value = $this->whole_common($approximate_value);
 		return $approximate_value;
-		
-		return NULL;
-		$counter++;	
-		$subtraction_value = array('value' => $this->result($base_root, $base_root), 'remainder' => '0/1');
-		$subtraction = $this->subtract_total($value, $subtraction_value);
-		$division = $this->execute_divide($value, $subtraction_value);
-			
-		if($subtraction['value'] == 0 && $this->fraction_values($subtraction['remainder'])[0] == 0) {
-			return array('value' => $base_root, 'remainder' => '0/1');
-		}
-		
-		$division_whole_fraction = $this->whole_numerator($division);
-		$subtraction_whole_fraction = $this->whole_numerator($subtraction);
-		
-		$fraction_values_division = $this->fraction_values($division_whole_fraction);
-		$fraction_values = $this->fraction_values($subtraction_whole_fraction);
-		
-		$multiplier = $fraction_values[1];
-		$remainder = "0/1";
-		
-		$continue = false;
-		
-		$possible_numerator;
-		$possible_denominator;
-		
-		$d = $fraction_values[1];
-		
-		$fraction_values[0] = $this->result($fraction_values[0], $fraction_values[1]);
-		$fraction_values[1] = $this->result($fraction_values[1], $fraction_values[1]);
-		
-		$k = $this->result($base_root, $base_root);
-		$k = $this->result($fraction_values[1], $k);
-		$k = $this->add($fraction_values[0], $k);
-		
-		$m = $this->result($base_root, $base_root);
-		$m = $this->result($fraction_values[1], $m);
-		
-		$f = $fraction_values[0];
-		$b = $fraction_values[1];
-		
-		$n = $this->result($d, $base_root);
-		$k_root = $this->root($k, 2);
-		
-		
-		
-		
-		
-		$s = $this->result($base_root, $base_root);
-		$s = $this->result($s, $b);
-		$s = $this->add($s, $f);
-		
-		$s_root = $this->root($s, 2);
-		
-		$s_k = $this->result($base_root, $k_root);
-		$s_k_root = $s_k;		
-		$s_d = $this->root($m, 2);
-		
-
-		
-		
-		
-		if($k_root !== false) {
-			$n = $this->subtract($k_root, $n);
-			$remainder = $n."/".$d;
-		} else if($s_root !== false) {
-			$s_division = $this->execute_divide($s_root, $d); 			
-			$remainder_values = $this->fraction_values($s_division['remainder']);
-			$n = $remainder_values[0];
-			
-			$remainder = $n."/".$d;
-		} else {
-			$s_whole = $this->whole_common($s_root);
-			$d_whole = $this->whole_common($d);
-			$s_division = $this->execute_divide($s_whole, $d_whole);
-			
-			
-			$dv_squared = $this->result($d, $base_root);
-			$dv_squared = $this->result($dv_squared, $dv_squared);
-			
-			$under_root = $this->add($f, $dv_squared);
-			$dv_squared = $this->result(2, $dv_squared);
-			$under_root = $this->result($dv_squared, $under_root);
-			$under_root = $this->root($under_root, 2);
-			if($under_root !== false) {
-				$n = $this->add($f, $dv_squared);
-				$n = $this->subtract($n, $under_root);	
-				$n = $this->root($n, 2);
-				if($n !== false) {
-					$remainder = $n."/".$d;
-				} else {
-					$continue = true;	
-				}
-			} else {
-				
-				$continue = true;
-			}
-		}
-		
-		if(false && $continue) {
-			$continue = false;
-			$subtraction_fraction_values = $this->fraction_values($division_whole_fraction);
-			$k_alt = $subtraction_fraction_values[0];
-			$m_alt = $subtraction_fraction_values[1];
-			
-			$m_alt_unaltered = $m_alt;
-			$k_alt_unaltered = $k_alt;
-			
-			$k_root = $k_alt;
-			
-			$m_alt = $this->result($m_alt, $k_alt);
-			$k_alt = $this->result($k_alt, $k_alt);
-			
-			$f_alt = $this->subtract($k_alt, $m_alt);
-			
-			$b_alt = $this->result($base_root, $base_root);
-			$b_alt = $this->execute_divide($m_alt, $b_alt)['value'];
-			
-			$m_root = $this->root($m_alt, 2);
-			
-			$b_root = $this->root($b_alt, 2);
-			
-			$s = $this->result($base_root, $base_root);
-			$s = $this->result($b_alt, $s);			$s = $this->add($s, $f);
-			
-			$s_root = $this->root($s, 2);
-			
-			$s_k = $this->result($base_root, $k_root);
-			
-			
-			$d_alt;
-			if($m_root !== false) {
-				$d_alt = $this->execute_divide($m_root, $base_root);
-			} else if($b_root !== false) {
-				$d_alt = array('value' => $b_root, 'remainder' => '0/1');	
-			}
-			if(isset($d_alt)) {
-				$base_root_value = array('value' => $base_root, 'remainder' => '0/1');
-				$dv_alt = $this->multiply_total($d_alt, $base_root_value);
-				
-				$n_alt = $this->subtract_total(array('value' => $k_root, 'remainder' => '0/1'), $dv_alt);
-				$remainder = $n_alt['value']."/".$d_alt['value'];
-			} else {
-				$m_alt = $m_alt_unaltered;
-				$k_alt = $k_alt_unaltered;
-				
-				$m_root = $m_alt;
-				
-				$m_alt = $this->result($m_alt, $m_alt);
-				$k_alt = $this->result($k_alt, $m_alt);
-				
-				
-				$f_alt = $this->subtract($m_alt, $k_alt);
-				
-				$b_alt = $this->result($base_root, $base_root);
-				$b_alt = $this->execute_divide($k_alt, $b_alt)['value'];
-				
-				$k_root_alt = $this->root($k_alt, 2);
-				$k_root	= $k_root_alt;
-				$b_root = $this->root($b_alt, 2);	
-				unset($d_alt);
-				if($m_root !== false) {
-					$d_alt = $this->execute_divide($m_root, $base_root);
-					$d_alt = $d_alt['value'];
-					$n_alt = $this->subtract($k_root, $m_root);
-					$remainder = $n_alt."/".$d_alt;
-				} else if($b_root !== false) {
-					$d_alt = $b_root;	
-				} else {
-					$d_alt = $d;	
-				}
-				if(isset($d_alt) && !isset($n_alt) && strpos($k_root, ".") === false) {
-					$dv_alt = $this->result($d_alt, $base_root);
-					
-					
-					$n_alt = $this->subtract($k_root, $dv_alt);
-					$remainder = $n_alt."/".$d_alt;
-				} else {
-					$continue = true;	
-				}
-			} 		}
-		
-		if($continue) {
-			$continue = false;
-			
-			
-			
-			
-			
-			$whole_value = $this->whole_numerator($value);
-			$whole_value = $this->fraction_values($whole_value);
-			
-			
-			$numerator_root = $this->square_root($whole_value[0]);
-			$denominator_root = $this->square_root($whole_value[1]);
-			
-			$root_value;
-			if($numerator_root !== false) {
-				$root_value = $whole_value[1];
-			} else if($denominator_root !== false) {
-				$root_value = $whole_value[0];
-			} else {
-				$whole_value[0] = $this->result($whole_value[0], $whole_value[1]);
-				$root_value = $whole_value[0];
-			}
-			$resolution_value;
-			$continued_fraction_numerator = $this->square_root_fraction($root_value);
-				if($this->disable_built_in_approximation || strlen($whole[0]) > $this->maximum_divider_exponent || strlen($whole[1]) > $this->maximum_divider_exponent) {
-					$approximate_value = $this->root_fraction($root_value, $power);
-				} else {
-					$approximate_value = sqrt($root_value);
-				}
-				$approximate_value = $this->whole_common($approximate_value);
-				$resolution_value = $approximate_value;			
-			if($numerator_root !== false) {
-				$result = $this->execute_divide($numerator_root, $resolution_value);
-			} else if($denominator_root !== false) {
-				$result = $this->execute_divide($resolution_value, $denominator_root);
-			} else {
-				$result = $this->execute_divide($resolution_value, $whole_value[1]);
-			}
-			return $result;
-			
-			
-			
-		}
-		$root = array('value' => $base_root, 'remainder' => $remainder);
-		
-		return $root;
 	}
 	
 	function next_decimal_value($value) {
@@ -5474,7 +5247,7 @@ class evaluation {
 	}
 	
 	function list_divisors($value) {
-		$factors = $this->prime_factors($value);
+		$factors = $this->prime_factors_alt($value);
 		$divisors = $factors;
 		
 		$combinations = $this->combinations($factors);

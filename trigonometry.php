@@ -97,7 +97,7 @@ class trigonometry {
 			
 			$length = $denominator;
 			
-			$length = $this->evaluation->execute_power($length, 2);			
+			$length = $this->evaluation->execute_power($length, 2, true);			
 			$length = $this->evaluation->execute_divide(array('value' => '1', 'remainder' => '0/1'), $length);
 			$point = $this->vector->stretch_vector($slope_vector, $length);
 			
@@ -436,8 +436,8 @@ class trigonometry {
 		}
 		$denominator_value_a = $this->evaluation->subtract_total(array('value' => '1', 'remainder' => '0/1'), $x);
 		$denominator_value_b = $this->evaluation->add_total(array('value' => '1', 'remainder' => '0/1'), $x);
-		$denominator_value_a = $this->evaluation->execute_power($denominator_value_a, 2);
-		$denominator_value_b = $this->evaluation->execute_power($denominator_value_b, 2);
+		$denominator_value_a = $this->evaluation->execute_power($denominator_value_a, 2, true);
+		$denominator_value_b = $this->evaluation->execute_power($denominator_value_b, 2, true);
 		$denominator = $this->evaluation->multiply_total($denominator_value_a, $denominator_value_b);
 		if($this->evaluation->equals_zero($denominator)) {
 			return $this->evaluation->execute_divide($this->evaluation->pi(), "2");	
