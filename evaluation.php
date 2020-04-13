@@ -5443,7 +5443,10 @@ class evaluation {
 		}
 		$places = $this->subtract(strlen($binary_value), $places);
 		$places = $this->subtract($places, "1");
-		$binary_value = substr($binary_value, 0, $places); // (int)(strlen($binary_value)-1-$places)	
+		$binary_value = substr($binary_value, 0, $places); // (int)(strlen($binary_value)-1-$places)
+		if($binary_value === false) {
+			$binary_value = "0";	
+		}
 		$resutling_value;
 		if($change_base) {
 			$resulting_value = $this->change_base_decimal($binary_value, 2);
@@ -5627,6 +5630,21 @@ class evaluation {
 		if($value == $divider) {
 			return 0;	
 		}
+		$sub_value = $value;
+		/*$divider_squared = $this->result($divider, $divider);
+		$y_4 = $this->result($divider, "4");
+		$last_sub_value = $sub_value;
+		while(!$this->negative($sub_value) && $this->larger($sub_value, $divider)) {	
+			$last_sub_value = $sub_value;
+			$sub_value = $this->subtract($sub_value, $divider_squared);
+			$sub_value = $this->subtract($sub_value, $y_4);
+			$division = $this->execute_divide($sub_value, "2");
+			if($this->fraction_values($division['remainder'])[0] == 0) {
+				$sub_value = $division['value'];	
+			}
+		}
+		$value = $last_sub_value;*/
+		
 		$division = $this->execute_divide($value, $divider);
 		$numerator = $this->fraction_values($division['remainder'])[0];
 		return $numerator;
@@ -6056,7 +6074,7 @@ class evaluation {
 		
 		$sum_division = $this->execute_divide($sum, $value);		
 		$division = $this->execute_divide($division, $sum_division);
-		if($this->fraction_values($division['remainder'])[0] == 0) {
+		if($this->fraction_values($division['remainder'])[0] == 0 && $this->fraction_values($sum_division['remainder'])[0] == 0) {
 			return false;	
 		}
 		return true;
@@ -7562,6 +7580,5 @@ class evaluation {
 		return $this->trigonometry->arcsin($radian, $precision);	
 	}
 }
-
 
 ?>
