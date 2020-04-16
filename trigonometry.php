@@ -450,6 +450,31 @@ class trigonometry {
 		return $atan;	
 	}
 	
+	function compute_pi_alt_sub($precision=12, $inner_value=NULL) {
+		if($inner_value === NULL) {
+			$inner_value = array('value' => '2', 'remainder' => '0/1');	
+		} else {
+			$inner_value = $this->evaluation->add_total(array('value' => '2', 'remainder' => '0/1'), $inner_value);	
+		}
+		$root = $this->evaluation->execute_power($inner_value, "2", true);
+		
+		$value = $this->evaluation->execute_divide($root, "2");
+		if($precision == "0") {
+			return $value;
+		}
+		if($this->evaluation->truncate_fractions_length > 0) {
+			$value['remainder'] = $this->evaluation->execute_shorten_fraction($value['remainder']);	
+		}
+		return $this->evaluation->multiply_total($value, $this->compute_pi_alt_sub($this->evaluation->subtract($precision, "1"), $root));	
+	}
+	
+	function compute_pi_alt($precision=12) {
+		$result = $this->compute_pi_alt_sub($precision, NULL);
+		$result = $this->evaluation->execute_divide($result, array('value' => '2', 'remainder' => '0/1'));
+		$result = $this->evaluation->execute_divide("1", $result);
+		return $result;	
+	}
+	
 	/*function calculate_pi($precision=NULL) {
 		if($precision === NULL) {
 			$precision = $this->sine_precision;	
