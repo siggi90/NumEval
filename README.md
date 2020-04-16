@@ -54,8 +54,8 @@ Evaluation:
     List Rational Roots
         list_rational_roots, returns a list of all rational roots from 'from' value to 'to' value.
     Is Prime
-        prime (deterministic) Strength parameter configures strength of the function(default value is 8), pass $closest_known_prime lower than the value being determined as the second parameter for better validation, use $weak=true for a very fast weak test.
-        prime_alt (NumEval's old primality test (deterministic))
+        prime (Strength parameter configures strength of the function(default value is 8), pass $closest_known_prime lower than the value being determined as the second parameter for better validation, use $weak=true for a very fast weak test.) (determinstic for suitable strenght value)
+        prime_alt (NumEval's old primality test) (deterministic)
         prime_p (Pollard's Rho primality test) (deterministic)
     Absolute
     Negative
@@ -90,6 +90,11 @@ Evaluation:
     Ord
     Factorial
     Parse Value (parsing value from parse function to value-pair
+    Binary Functinos
+        Binary Modulus
+        Binary Multiplication
+        Binary Addition
+        Binary Subtraction (negative values are not supported)
 
 Evaluation_parse
 
