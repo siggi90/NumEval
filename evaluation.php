@@ -5372,6 +5372,7 @@ class evaluation {
 	
 	
 	function digit_sum($value, $subtract=false) {
+		$value = $this->absolute($value);
 		$digits = $this->get_digits($value);
 		$sum = 0;
 		foreach($digits as $digit) {
@@ -5995,9 +5996,11 @@ class evaluation {
 																		if(!$weak) {
 																			$valid = $this->binary_modulus->prime_verification_auxillary($value_binary);
 																			if($closest_known_prime != NULL) {
-																				$valid = $this->binary_modulus->iterative_subtraction_alt($value_binary);
-																				if($valid === "undetermined") {
-																					$valid = $this->prime_root_auxillary_fast($value);	
+																				if($valid) {
+																					$valid = $this->binary_modulus->iterative_subtraction_alt($value_binary);
+																					if($valid === "undetermined") {
+																						$valid = $this->prime_root_auxillary_fast($value);	
+																					}
 																				}
 																			}
 																		}
@@ -7518,8 +7521,19 @@ class evaluation {
 		}
 	}
 	
-	function pi() {
-		return $this->execute_divide("355", "113");	
+	function pi($precision=0) {
+		if($this->pi_value !== NULL) {
+			return $this->pi_value;	
+		}
+		if($precision == 0) {
+			return $this->execute_divide("355", "113");	
+		}
+		return $this->trigonometry->compute_pi_alt($precision);
+	}
+	
+	private $pi_value = NULL;
+	function set_pi_value($pi_value) {
+		$this->pi_value = $pi_value;
 	}
 	
 	function parse_value($value) {

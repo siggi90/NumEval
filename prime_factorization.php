@@ -53,7 +53,7 @@ class prime_factorization {
 			$this->prime_factors[] = "3";
 			$division = $this->evaluation->execute_divide($value, "3")['value'];	
 			return $this->factor($division);	
-		} else {			
+		} else {		
 			$a['root'] = $this->evaluation->root($value, "2");
 			if($a['root'] === false) {
 				$a['root'] = $this->evaluation->root_closest_result;	
@@ -74,16 +74,9 @@ class prime_factorization {
 					return $this->factor($a['root']);	
 				}
 			} else {
-				$b = $this->find_value_iterative($value, "2");
-				$interval = $b['interval'];
-				$b = $b['result'];
-								
-				$a = $this->evaluation->add($value, $this->evaluation->result($b, $b));
-				$a = $this->evaluation->root($a, "2");
-												
-				$term_a = $this->evaluation->add($a, $b);
-				$term_b = $this->evaluation->subtract($a, $b);
-										
+				$term_a = $this->factor_sub_binary($value);
+				$term_b = $this->evaluation->execute_divide($value, $term_a)['value'];
+				
 								
 				$this->factor($term_a);
 				return $this->factor($term_b);

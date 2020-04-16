@@ -71,7 +71,7 @@ class binary_modulus {
 		$modulus = $this->execute_modulus($inverse_verification, $value);
 		$modulus = $this->evaluation->remove_leading_zeros($modulus);
 		if($modulus == "1") {
-			if($this->evaluation->larger($n_value_count, $this->auxillary_verification_strength)) {
+			if($this->evaluation->larger($n_value_count, $this->auxillary_verification_strength) || $this->evaluation->larger($n_value, $value)) {
 				return true;	
 			}
 			return $this->prime_verification_auxillary($value, $n_value, $n_value_count);
@@ -1092,7 +1092,7 @@ class binary_modulus {
 		$modulus = $this->binary_division->divide($remainder_sum, $divider);
 		
 		
-		return $modulus;
+		return $this->evaluation->remove_leading_zeros($modulus);
 	}
 	
 	function no_remainder($value, $divider) {
@@ -1643,12 +1643,11 @@ class binary_modulus {
 	private $modulus_split_remainder_value = NULL;
 		
 	function modulus_split($x, $binary_value_subtraction, $return_remainder=false, $value_part_remainder=NULL) {
-		
 		$palindrome_modulus = $this->binary_power_modulus_sub_palindrome($x, $binary_value_subtraction);
 		if($palindrome_modulus !== false) {
 			return $this->execute_modulus($palindrome_modulus, $binary_value_subtraction);	
 		}
-		
+
 		$value_length = strlen($x);
 		$divider_length = strlen($binary_value_subtraction);
 		$modulus_length;
@@ -1704,10 +1703,9 @@ class binary_modulus {
 		
 		if($this->evaluation->larger($remainder_length, $this->evaluation->result($modulus_length, 2))) {
 			$x_remainder_substring = substr($x, 0, $remainder_length);
-			$sub_call = $this->modulus_split($x_remainder_substring, $binary_value_subtraction, true, $value_part_remainder);
+			$sub_call = $this->modulus_split($x_remainder_substring, $binary_value_subtraction, true, $remainder);
 		} else {			
-			//-----unfixed issue-----
-			/*if($this->evaluation->larger($remainder_length, $split_length)) { 
+			if($this->evaluation->larger($remainder_length, $split_length)) { 
 				$split_division = $this->evaluation->execute_divide($remainder_length, $split_length);
 				$max_value = $remainder_length;
 				$value_split_value = $split_length;								
@@ -1717,10 +1715,7 @@ class binary_modulus {
 				}
 		
 				$max_value = $this->evaluation->subtract($remainder_length_value, $remainder_length);
-				echo "max_value: ".$max_value."\n";
-				
-				
-			}*/
+			}
 			if($remainder_length != "0") {
 				$x_remainder = substr($x, 0, $remainder_length);
 			}
@@ -1751,7 +1746,7 @@ class binary_modulus {
 				$remainder_modulus_value = $this->execute_modulus($value_part, $binary_value_subtraction);
 				
 												
-				$binary_multiplier_modulus_addition = $this->execute_modulus($this->evaluation->change_base($split_length, "2"), $binary_value_subtraction);
+				$binary_multiplier_modulus_addition = $this->execute_modulus($this->binary_power_value($split_length), $binary_value_subtraction);
 				
 				
 				while($this->evaluation->larger($max_value, $value_split_value, false)) {
@@ -1842,55 +1837,6 @@ class binary_modulus {
 		
 	}
 		
-	/*function binary_power_modulus($binary_power, $modulus_value) {
-		$digit_difference = $this->evaluation->subtract($binary_power, strlen($modulus_value));
-		if($this->evaluation->negative($digit_difference) || $digit_difference == 0) {
-			return $modulus_value;		
-		}
-		$modulus_value_unaltered = $modulus_value;
-		$modulus_value = $this->evaluation->pad_zeros($modulus_value, $digit_difference);
-		$result = $this->evaluation->binary_subtraction($this->binary_power_value($binary_power), $modulus_value);
-		if($this->evaluation->larger($result, $modulus_value_unaltered, false)) {			
-			$result = $this->execute_modulus($result, $modulus_value_unaltered);
-			$result = $this->evaluation->remove_leading_zeros($result);
-			return $result;
-		}
-		$result = $this->evaluation->remove_leading_zeros($result);
-		return $result;
-	}
-	
-	function execute_binary_modulus($value, $modulus) {
-		$value = $this->trim_zeros($value, true);
-						
-		$value_digits = $this->evaluation->get_digits($value);
-		$total = "0";
-		
-		if($value == $modulus) {
-			return "0";	
-		}
-		if($this->evaluation->larger($modulus, $value)) {
-			return $value;	
-		}
-		
-		$modulus_length = strlen($modulus);
-		$remainder_value = "";
-		foreach($value_digits as $power => $digit) {
-			if($digit == "1" && $this->evaluation->larger($power, $modulus_length, false)) {
-				$binary_power_modulus = $this->execute_modulus($this->binary_power_value($power), $modulus);
-				$total = $this->evaluation->binary_addition($total, $binary_power_modulus);
-			} else if($digit == "1") {
-				$addition = $this->binary_power_value($power);
-				$total = $this->evaluation->binary_addition($total, $addition);
-			}
-		}
-		$addition_remainder = $this->execute_modulus($remainder_value, $modulus);
-		$total = $this->evaluation->binary_addition($addition_remainder, $total);
-		$total = $this->execute_modulus($total, $modulus);
-		$total = $this->evaluation->remove_leading_zeros($total);
-		
-		return $total;
-	}*/
-	
 	function array_to_decimal($arr) {
 		foreach($arr as $key => $value) {
 			if($key != 'divider_translation') {
@@ -2214,5 +2160,6 @@ class binary_modulus {
 		return $this->trim_zeros(array_reverse($value_digits));	
 	}	
 }
+
 
 ?>
