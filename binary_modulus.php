@@ -61,7 +61,10 @@ class binary_modulus {
 			$n_value_count = $n_2;
 		} else {
 			$n_value_count = $this->evaluation->binary_addition($n_value_count, "1");
-			$n_value = $this->evaluation->binary_multiplication($n_value, $n_value_count);	
+			$n_value = $this->evaluation->binary_multiplication($n_value, $n_value_count);
+			if($this->evaluation->larger($n_value, $value)) {
+				return true;	
+			}
 		}
 		$fermat_count = $this->evaluation->binary_subtraction($value, "10");
 				
@@ -71,7 +74,7 @@ class binary_modulus {
 		$modulus = $this->execute_modulus($inverse_verification, $value);
 		$modulus = $this->evaluation->remove_leading_zeros($modulus);
 		if($modulus == "1") {
-			if($this->evaluation->larger($n_value_count, $this->auxillary_verification_strength) || $this->evaluation->larger($n_value, $value)) {
+			if($this->evaluation->larger($n_value_count, $this->auxillary_verification_strength)) {
 				return true;	
 			}
 			return $this->prime_verification_auxillary($value, $n_value, $n_value_count);
@@ -117,11 +120,15 @@ class binary_modulus {
 		$x = "10";
 		$y = "10";
 		$d = "1";
+		$max_length = $this->evaluation->result(strlen($n), "2");
 		while($d == "1") {
 			$x = $this->pollard_sub($x, $n);
 			$y = $this->pollard_sub($this->pollard_sub($y, $n), $n);
 			
 			$subtraction = $this->absolute_binary_subtraction($x, $y);
+			if($this->evaluation->larger(strlen($subtraction), $max_length)) {
+				return false;	
+			}
 			$d = $this->gcd($subtraction, $n);
 			
 			$d = $this->evaluation->remove_leading_zeros($d);
@@ -288,98 +295,6 @@ class binary_modulus {
 		}
 		return true;
 	}
-	
-	/*function verify_zero_modulus($f, $m, $s2) {
-		if($this->previous_factorial_zero_value == NULL) {
-			return true;	
-		}
-				$s3 = $f;		
-		echo "m:\n";
-		$value_binary = $this->evaluation->change_base($m, "10", "2");
-		//var_dump($value_binary);
-		echo "s:\n";
-		$value_binary = $this->evaluation->change_base($s3, "10", "2");
-		//var_dump($value_binary);
-		
-		
-		$n1 = $this->previous_factorial_zero_value['divider'];
-		$f1 = $this->previous_factorial_zero_value['factorial_value'];
-		$s = $this->get_factorial_inverse($n1, $f1, $m);
-		
-		$factorial = $n1;
-		$factorial_modulus = "1";
-		while($this->evaluation->larger($m, $factorial, false)) {
-			$factorial_modulus = $this->evaluation->binary_multiplication($factorial_modulus, $factorial);
-			$factorial_modulus = $this->execute_modulus($factorial_modulus, $m);
-			$factorial = $this->evaluation->binary_addition($factorial, "1");
-		}
-		echo "s2:\n";
-		$value_binary = $this->evaluation->change_base($s2, "10", "2");
-		//var_dump($value_binary);
-		echo "s:\n";
-		$value_binary = $this->evaluation->change_base($s, "10", "2");
-		//var_dump($value_binary);
-		echo "factorial_modulus:\n";
-		$value_binary = $this->evaluation->change_base($factorial_modulus, "10", "2");
-		//var_dump($value_binary);
-		
-		$verification_value = $this->evaluation->binary_multiplication($s, $factorial_modulus);
-		$verification_value = $this->evaluation->binary_multiplication($verification_value, $s2);
-		$verification_value = $this->execute_modulus($verification_value, $m);
-		
-		echo "verification_value:\n";
-		$value_binary = $this->evaluation->change_base($verification_value, "10", "2");
-		//var_dump($value_binary);
-		
-		if($verification_value == $this->evaluation->binary_addition($s2, "1")) {
-			return false;	
-		}
-		
-		
-		
-		
-		return true;
-	}
-	
-	function validate_zero_modulus($f, $n) {
-		$x = "10";
-		$m = $this->evaluation->binary_multiplication($n, $x);
-		echo "f:\n";
-		$value_binary = $this->evaluation->change_base($f, "10", "2");
-		//var_dump($value_binary);
-		echo "n:\n";
-		$value_binary = $this->evaluation->change_base($n, "10", "2");
-		//var_dump($value_binary);
-		echo "m:\n";
-		$value_binary = $this->evaluation->change_base($m, "10", "2");
-		//var_dump($value_binary);
-				
-				
-				$xf = $this->evaluation->binary_multiplication($x, $f);
-		$s = $this->execute_modulus($xf, $m);
-		echo "s: ".$s."\n";
-		echo "s:\n";
-		$value_binary = $this->evaluation->change_base($s, "10", "2");
-		//var_dump($value_binary);
-		
-		$factorial = $n;		$factorial_value_max = $this->evaluation->binary_subtraction($m, "1");
-		while($this->evaluation->larger($factorial_value_max, $factorial)) {
-			$s = $this->evaluation->binary_multiplication($s, $factorial);
-			$s = $this->execute_modulus($s, $m);
-			echo "s:\n";
-			$value_binary = $this->evaluation->change_base($s, "10", "2");
-			//var_dump($value_binary);
-			$factorial = $this->evaluation->binary_addition($factorial, "1");			
-			if($s == "0") {
-				return true;	
-			}
-		}
-		echo "s: ".$s."\n";
-		if($s == "0") {
-			return true;	
-		}
-		return false;
-	}*/
 	
 	function prime_validation($value_binary) {
 		$value_binary_added = $this->evaluation->binary_addition($value_binary, "11");
@@ -763,20 +678,7 @@ class binary_modulus {
 			return $result;
 		}
 	}
-	
-	/*function binary_mask_power($value, $binary_power_subtracted, $divider_length) {
-		$start_remainder = substr($value, 0, $divider_length);
-				$rest_remainder = $this->binary_power_modulus_sub_palindrome(substr($value, $divider_length), $binary_power_subtracted);
-				$remainder = $start_remainder;
-		if(!$this->just_zeros($rest_remainder) && $rest_remainder != "") {
-									
-			$remainder = $rest_remainder.$start_remainder;
-		} else {
-					}
-			
-				return $remainder;
-	}*/
-	
+		
 	private $mask_division_depth = 0;
 	private $mask_division_precision = 100;
 	function mask_division($value, $divider, $precision=NULL) {
