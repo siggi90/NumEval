@@ -2998,8 +2998,13 @@ class evaluation {
 	public $disable_exact_root_results = false;
 		
 	function execute_power($value, $power, $root_fraction=false) { 		
-		if($this->disable_exact_root_results || $root_fraction) {
+		if($root_fraction) {
 			return $this->root_fraction($value, $power);
+		} else if($this->disable_exact_root_results) {
+			$quick_fraction = $this->quick_numeric($value);
+			$approximate_value = pow($quick_fraction, 1/$power); 	
+			$approximate_value = $this->whole_common($approximate_value);
+			return $approximate_value;
 		}
 		$this->execute_power_approximate_flag = false;
 		
