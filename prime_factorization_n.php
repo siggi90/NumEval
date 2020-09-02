@@ -103,7 +103,7 @@ class prime_factorization_n {
 			if($this->evaluation->fraction_values($division['remainder'])[0] == 0) {
 				return array($k_guess_add, $division['value']);	
 			}
-			$k_guess_add = $this->evaluation->add($k_guess, "1");
+			$k_guess_add = $this->evaluation->add($k_guess_add, "1");
 			$k_guess = $this->evaluation->subtract($k_guess, "1");
 		}
 		

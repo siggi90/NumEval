@@ -242,7 +242,7 @@ class prime_factorization {
 				}
 			}
 			$x = $this->evaluation->add($x, "2");
-								}
+		}
 	}
 	
 	function find_value_iterative_reverse($value, $root) {
