@@ -1345,7 +1345,7 @@ class prime_factorization {
 		$modulus_delta = $this->evaluation->subtract($modulus, $modulus_value);
 		$modulus_value = $modulus;
 		$modulus = $modulus_delta;
-		while($root < $n) {
+		while(true) {
 			$root = $this->evaluation->add($root, 1);
 			$modulus = $this->evaluation->add($modulus, "2");
 			$modulus_value = $this->evaluation->add($modulus_value, $modulus);
