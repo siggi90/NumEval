@@ -1316,6 +1316,47 @@ class prime_factorization {
 			}
 		}
 	}
+	
+	/*
+		m > k
+		(k*m^2) % [k^2*m) = km
+		(m^2 % km) % m = 0
+	*/
+	
+	function fast_iterative_power_search($n) {
+		$root = $this->evaluation->root($n, 2);
+		$root = $this->evaluation->root_closest_result;
+		
+		$squared = $this->evaluation->result($root, $root);
+		if($this->evaluation->larger($n, $squared)) {
+			$root = $this->evaluation->add($root, 1);	
+			$squared = $this->evaluation->result($root, $root);
+		}
+		$modulus = $this->evaluation->modulus($squared, $n);
+		if($modulus == $root) {
+			return $root;	
+		}
+		
+		$modulus_value = $modulus;
+		$root = $this->evaluation->add($root, 1);	
+		$squared = $this->evaluation->result($root, $root);	
+		$modulus = $this->evaluation->modulus($squared, $n);
+		
+		$modulus_delta = $this->evaluation->subtract($modulus, $modulus_value);
+		$modulus_value = $modulus;
+		$modulus = $modulus_delta;
+		while($root < $n) {
+			$root = $this->evaluation->add($root, 1);
+			$modulus = $this->evaluation->add($modulus, "2");
+			$modulus_value = $this->evaluation->add($modulus_value, $modulus);
+			if($this->evaluation->larger($modulus_value, $n)) {
+				$modulus_value = $this->evaluation->subtract($modulus_value, $n);	
+			}
+			if($this->evaluation->modulus($modulus_value, $root) == 0) {
+				return $root;	
+			}
+		}
+	}
 }
 
 ?>
