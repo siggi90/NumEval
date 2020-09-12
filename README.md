@@ -114,4 +114,6 @@ Quadratic_solver solves quadratic equations using numeval.
 
 Arithematic is for delaying resolving roots and powers until the end of arithematic which can be useful for maximum precision.
 
+The Prime_factorization_n class factors the product of two logarithms.
+
 NumEval is also available as a NuGet package: https://www.nuget.org/packages/NumEval/
