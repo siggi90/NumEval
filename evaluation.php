@@ -1411,7 +1411,6 @@ class evaluation {
 			$iteration_count = $this->logarithm_iteration_count;
 		}
 		
-		
 		if($base == 'e' || $this->fraction_values($base['remainder'])[0] != 0 || $base['value'] > 10) {
 			return $this->logarithm_sub($value, $base);	
 		}
@@ -1431,6 +1430,13 @@ class evaluation {
 		$fraction_whole = array('value' => $division['value'], 'remainder' => '0/1');
 		$fraction_part = array('value' => 1, 'remainder' => $fraction_values[0]."/".($this->result($fraction_values[1], $fraction_whole['value'])));
 		
+		if($this->fraction_values($fraction_part['remainder'])[1] == '0') {
+			$sub_result = $this->logarithm_sub($value, $base);
+			if(!$this->negative($sub_result)) {
+				$sub_result = $this->negative_value($sub_result);
+			}
+			return $sub_result;
+		}
 		
 		$fraction_set = $fraction_part;
 		
@@ -1813,8 +1819,10 @@ class evaluation {
 		return $this->execute_power($value, $power);
 	}
 	
-	function power($value, $power) {
-		
+	function power($value, $power, $approximate=false) {
+		if($approximate) {
+			return $this->whole_common(pow($this->quick_numeric($value), $this->quick_numeric($power)));	
+		}
 		$negative_power = false;
 		if($this->negative($power)) {
 			$negative_power = true;
@@ -2997,7 +3005,7 @@ class evaluation {
 	public $disable_built_in_approximation;
 	public $disable_exact_root_results = false;
 		
-	function execute_power($value, $power, $root_fraction=false) { 		
+	function execute_power($value, $power, $root_fraction=false) {
 		if($root_fraction) {
 			return $this->root_fraction($value, $power);
 		} else if($this->disable_exact_root_results) {
@@ -3019,6 +3027,7 @@ class evaluation {
 		}
 		if($power == 2) {
 			$alter_result = $this->execute_power_alter_a($whole_numerator);
+			//var_dump("alter_result:\n");
 			if($alter_result !== false) {
 				return $alter_result;	
 			}
@@ -3046,7 +3055,7 @@ class evaluation {
 				return $this->root_fraction($value, $power);
 			} else {		
 				$quick_fraction = $this->quick_numeric($value);
-				$approximate_value = pow($quick_fraction, 1/$power); 					
+				$approximate_value = pow($quick_fraction, 1/$power); 	
 				$approximate_value = $this->whole_common($approximate_value);
 				return $approximate_value;
 			}
@@ -3233,7 +3242,7 @@ class evaluation {
 			return $this->root_fraction($value, $power);
 		}
 		$quick_fraction = $this->quick_numeric($value);
-		$approximate_value = pow($quick_fraction, 1/$power); 					
+		$approximate_value = pow($quick_fraction, 1/$power); 			
 		$approximate_value = $this->whole_common($approximate_value);
 		return $approximate_value;
 	}
@@ -4312,7 +4321,8 @@ class evaluation {
 			$fraction_a = $this->fraction_values($common[0]);
 			$fraction_b = $this->fraction_values($common[1]);
 		}
-		$numerator = $this->add($fraction_a[0], $fraction_b[0]);		$denominator = $fraction_a[1];
+		$numerator = $this->add($fraction_a[0], $fraction_b[0]);		
+		$denominator = $fraction_a[1];
 		return $numerator."/".$denominator;
 	}
 	
@@ -5700,6 +5710,7 @@ class evaluation {
 			$negative = true;	
 		}
 		$value = $this->absolute($value);
+		$value = $this->minimize_fraction($value);
 		$fraction_values = $this->fraction_values($value);
 		
 		if($fraction_values[0] === $fraction_values[1]) {
@@ -7539,6 +7550,47 @@ class evaluation {
 	private $pi_value = NULL;
 	function set_pi_value($pi_value) {
 		$this->pi_value = $pi_value;
+	}
+	
+	private $e_value = NULL;
+	function set_e_value($e_value) {
+		$this->e_value = $e_value;
+	}
+	
+	function get_e_value($approximate=false, $precision) {
+		if($this->e_value != NULL) {
+			return $this->e_value;	
+		}
+		if($approximate === true) {
+			return $this->whole_common(exp(1));
+		}
+		$e = new e($this);
+		if($precision === NULL) {
+			$precision = $this->logarithm_iteration_count;	
+		}
+		$e->set_precision($precision);
+		return $e->infinite_series();
+	}
+	
+	function exp($value, $approximate=false, $precision=NULL) {
+		if($approximate === true) {
+			return $this->whole_common(exp($this->quick_numeric($value)));	
+		} else if($this->e_value != NULL && $approximate === 2) {
+			return $this->power($this->get_e_value(), $value);
+		}
+		$e = new e($this);
+		if($precision === NULL) {
+			$precision = $this->logarithm_iteration_count;	
+		}
+		if($precision !== NULL) {
+			$e->set_precision($precision);
+		}
+		return $e->infinite_series($value);
+	}
+	
+	function fast_power($value, $power, $logarithm_10_value=NULL) {
+		$power_class = new power($this, $logarithm_10_value);
+		return $power_class->fast_power($value, $power);
 	}
 	
 	function parse_value($value) {
