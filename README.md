@@ -32,6 +32,7 @@ Evaluation:
         minimize_fraction (removes additional zeros from numerator and denominator)
     Powers/Roots
         power (accepts value with remainder and power as value with remainder, to get roots use fractional powers)
+	fast_power (faster for fractional roots is dependent on logarithm precision. Returns approximate value.)
         execute_power_whole (for taking integer/whole powers accepts value-remainder pair and power as string)
         execute_power (for taking integer/whole roots accepts value-remainder pair and power as string)
         root_fraction (used as subroutine in power when disable_built_in_approximation is set to true, can be quicker to use directly)

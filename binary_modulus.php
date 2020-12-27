@@ -120,15 +120,13 @@ class binary_modulus {
 		$x = "10";
 		$y = "10";
 		$d = "1";
-		$max_length = $this->evaluation->result(strlen($n), "2");
+		$length_n = strlen($n);
+		$max_length = false;
 		while($d == "1") {
 			$x = $this->pollard_sub($x, $n);
 			$y = $this->pollard_sub($this->pollard_sub($y, $n), $n);
 			
 			$subtraction = $this->absolute_binary_subtraction($x, $y);
-			if($this->evaluation->larger(strlen($subtraction), $max_length)) {
-				return false;	
-			}
 			$d = $this->gcd($subtraction, $n);
 			
 			$d = $this->evaluation->remove_leading_zeros($d);
